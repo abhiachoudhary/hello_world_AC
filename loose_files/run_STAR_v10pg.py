@@ -49,11 +49,11 @@ parser.add_argument('--waspOutputMode', default='SAMtag')
 parser.add_argument('--quantTranscriptomeSAMoutput', default='BanSingleEnd_ExtendSoftclip', help='string: alignment filtering for TranscriptomeSAM output')
 parser.add_argument('--winAnchorMultimapNmax', default='100', help='int>0: max number of loci anchors are allowed to map to')
 parser.add_argument('--genomeTransformOutput', default=['SAM', 'SJ', 'Quant'], nargs='+', help='string(s) which output to transform back to original genome')
-# parser.add_argument('--chimSegmentMin', default='15', help='Minimum chimeric segment length; switches on detection of chimeric (fusion) alignments')
-# parser.add_argument('--chimJunctionOverhangMin', default='15', help='Minimum overhang for a chimeric junction')
-# parser.add_argument('--chimOutType', default=['Junctions', 'WithinBAM', 'SoftClip'], nargs='+', help='')
-# parser.add_argument('--chimMainSegmentMultNmax', default='1', help='')
-# parser.add_argument('--chimOutJunctionFormat', default='0', help='Formatting for Chimeric.out.junction')
+parser.add_argument('--chimSegmentMin', default='15', help='Minimum chimeric segment length; switches on detection of chimeric (fusion) alignments')
+parser.add_argument('--chimJunctionOverhangMin', default='15', help='Minimum overhang for a chimeric junction')
+parser.add_argument('--chimOutType', default=['Junctions', 'WithinBAM', 'SoftClip'], nargs='+', help='')
+parser.add_argument('--chimMainSegmentMultNmax', default='1', help='')
+parser.add_argument('--chimOutJunctionFormat', default='0', help='Formatting for Chimeric.out.junction')
 parser.add_argument('--genomeLoad', default='NoSharedMemory')
 parser.add_argument('--sjdbFileChrStartEnd', default=None, help='SJ.out.tab file (e.g., from 1st pass). With this option, only one pass will be run')
 parser.add_argument('--STARlong', action='store_true', help='Use STARlong instead of STAR')
@@ -105,12 +105,12 @@ if args.waspOutputMode=='SAMtag' and args.varVCFfile is not None:
 cmd += f' --quantTranscriptomeSAMoutput {args.quantTranscriptomeSAMoutput}'\
     + f' --winAnchorMultimapNmax {args.winAnchorMultimapNmax}'\
     + f" --genomeTransformOutput {' '.join(args.genomeTransformOutput)}"
-# if int(args.chimSegmentMin)>0:
-#     cmd += f' --chimSegmentMin {args.chimSegmentMin}'\
-#         + f' --chimJunctionOverhangMin {args.chimJunctionOverhangMin}'\
-#         + f" --chimOutType {' '.join(args.chimOutType)}"\
-#         + f' --chimMainSegmentMultNmax {args.chimMainSegmentMultNmax}'\
-#         + f' --chimOutJunctionFormat {args.chimOutJunctionFormat}'
+if int(args.chimSegmentMin)>0:
+    cmd += f' --chimSegmentMin {args.chimSegmentMin}'\
+        + f' --chimJunctionOverhangMin {args.chimJunctionOverhangMin}'\
+        + f" --chimOutType {' '.join(args.chimOutType)}"\
+        + f' --chimMainSegmentMultNmax {args.chimMainSegmentMultNmax}'\
+        + f' --chimOutJunctionFormat {args.chimOutJunctionFormat}'
 cmd += f" --outSAMattributes {' '.join(args.outSAMattributes)}"\
      + f" --outSAMattrRGline {' '.join(args.outSAMattrRGline)}"
 if args.sjdbFileChrStartEnd is not None:
@@ -156,12 +156,12 @@ with cd(args.output_dir):
         subprocess.check_call(f'gzip {args.prefix}.ReadsPerGene.out.tab', shell=True, executable='/bin/bash')
 
     # sort and index chimeric BAM
-    # if os.path.exists(f'{args.prefix}.Chimeric.out.sam'):
-    #     cmd = f'samtools sort --threads {args.threads} -o {args.prefix}.Chimeric.out.sorted.bam {args.prefix}.Chimeric.out.sam'
-    #     subprocess.check_call(cmd, shell=True, executable='/bin/bash')
-    #     cmd = f'samtools index {args.prefix}.Chimeric.out.sorted.bam'
-    #     subprocess.check_call(cmd, shell=True, executable='/bin/bash')
-    #     os.remove(f'{args.prefix}.Chimeric.out.sam')
+    if os.path.exists(f'{args.prefix}.Chimeric.out.sam'):
+        cmd = f'samtools sort --threads {args.threads} -o {args.prefix}.Chimeric.out.sorted.bam {args.prefix}.Chimeric.out.sam'
+        subprocess.check_call(cmd, shell=True, executable='/bin/bash')
+        cmd = f'samtools index {args.prefix}.Chimeric.out.sorted.bam'
+        subprocess.check_call(cmd, shell=True, executable='/bin/bash')
+        os.remove(f'{args.prefix}.Chimeric.out.sam')
 
     if os.path.exists(f'{args.prefix}.Chimeric.out.junction'):
         subprocess.check_call(f'gzip {args.prefix}.Chimeric.out.junction', shell=True, executable='/bin/bash')

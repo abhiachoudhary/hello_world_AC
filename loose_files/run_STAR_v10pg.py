@@ -153,24 +153,15 @@ with cd(args.output_dir):
         subprocess.check_call(f'gzip {args.prefix}.SJ.pass1.out.tab', shell=True, executable='/bin/bash')
 
     if os.path.exists(f'{args.prefix}.ReadsPerGene.out.tab'):
-        print('ReadsPerGene.out.tab file exists')
         subprocess.check_call(f'gzip {args.prefix}.ReadsPerGene.out.tab', shell=True, executable='/bin/bash')
-    else:
-        print('ReadsPerGene.out.tab file does not exist')
 
     # sort and index chimeric BAM
     if os.path.exists(f'{args.prefix}.Chimeric.out.sam'):
-        print('Chimeric.out.sam file exists')
         cmd = f'samtools sort --threads {args.threads} -o {args.prefix}.Chimeric.out.sorted.bam {args.prefix}.Chimeric.out.sam'
         subprocess.check_call(cmd, shell=True, executable='/bin/bash')
         cmd = f'samtools index {args.prefix}.Chimeric.out.sorted.bam'
         subprocess.check_call(cmd, shell=True, executable='/bin/bash')
         os.remove(f'{args.prefix}.Chimeric.out.sam')
-    else:
-        print('Chimeric.out.sam file does not exist')
 
     if os.path.exists(f'{args.prefix}.Chimeric.out.junction'):
-        print('Chimeric.out.junction file exists')
         subprocess.check_call(f'gzip {args.prefix}.Chimeric.out.junction', shell=True, executable='/bin/bash')
-    else:
-        print('Chimeric.out.junction file does not exist')

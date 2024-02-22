@@ -103,8 +103,9 @@ if args.waspOutputMode=='SAMtag' and args.varVCFfile is not None:
         args.outSAMattributes.append('vW')
         print("  * adding 'vW' tag to outSAMattributes", flush=True)
 cmd += f' --quantTranscriptomeSAMoutput {args.quantTranscriptomeSAMoutput}'\
-    + f' --winAnchorMultimapNmax {args.winAnchorMultimapNmax}'\
-    + f" --genomeTransformOutput {' '.join(args.genomeTransformOutput)}"
+    + f' --winAnchorMultimapNmax {args.winAnchorMultimapNmax}'
+if args.genomeTransformOutput is not None:
+    cmd += f" --genomeTransformOutput {' '.join(args.genomeTransformOutput)}"
 if int(args.chimSegmentMin)>0:
     cmd += f' --chimSegmentMin {args.chimSegmentMin}'\
         + f' --chimJunctionOverhangMin {args.chimJunctionOverhangMin}'\
